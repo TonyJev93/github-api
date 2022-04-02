@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Not Included File
+application-github.properties
