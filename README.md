@@ -10,6 +10,16 @@ dependencies {
 }
 ```
 
+## GitHub Connection
+
+- application-github.properties 파일 생성필요
+    ```properties
+    spring.github.user-name=User-Name
+    spring.github.token=Your-Token
+    ```
+    - GitHub 사용자 이름과 Access-Token을 각자 로컬 환경에서 작성한다.
+    - (주의) 해당 파일은 `.gitignore`에 포함 되어 있어 배포되지 않으며, 만약이라도 배포될 시 Access-Token이 외부에 공개되어 자동으로 gitHub에서 해당 토큰을 만료 시켜버린다.
+
 ## 제공 기능
 
 ### push
