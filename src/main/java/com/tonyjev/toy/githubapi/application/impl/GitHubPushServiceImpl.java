@@ -21,20 +21,18 @@ public class GitHubPushServiceImpl implements GitHubPushService {
   private final GitHub gitHub;
 
   @Value("${spring.github.user-name}")
-  private String userName;
+  private String gitHubUserName;
 
   @Override
   public String pushFiles(File baseDirectory, File targetDirectory, PushRequest pushRequest)
       throws IOException {
-    GHRepository repo = gitHub.getRepository(userName + "/" + pushRequest.getRepositoryName());
+    GHRepository repo = gitHub.getRepository(gitHubUserName + "/" + pushRequest.getRepositoryName());
 
     GHRef ref = repo.getRef(REF_NAME_PREFIX + pushRequest.getBranchName());
 
     GHCommit latestCommit = repo.getCommit(ref.getObject().getSha());
 
-    GHTreeBuilder treeBuilder = repo.createTree().baseTree(latestCommit.getTree().getSha());
-    GitHubUtils.addFilesToTree(treeBuilder, baseDirectory, targetDirectory);
-    GHTree tree = treeBuilder.create();
+    GHTree tree = getGitHubTree(baseDirectory, targetDirectory, repo, latestCommit);
 
     GHCommit commit =
         repo.createCommit()
@@ -54,5 +52,12 @@ public class GitHubPushServiceImpl implements GitHubPushService {
             + commit.getHtmlUrl());
 
     return commit.getHtmlUrl().getPath();
+  }
+
+  private GHTree getGitHubTree(File baseDirectory, File targetDirectory, GHRepository repo, GHCommit latestCommit) throws IOException {
+    GHTreeBuilder treeBuilder = repo.createTree().baseTree(latestCommit.getTree().getSha());
+    GitHubUtils.addFilesToTree(treeBuilder, baseDirectory, targetDirectory);
+    GHTree tree = treeBuilder.create();
+    return tree;
   }
 }
